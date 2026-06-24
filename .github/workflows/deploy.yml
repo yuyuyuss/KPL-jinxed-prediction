@@ -2,24 +2,24 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Create config.js from template
+      - uses: actions/checkout@v4
+      
+      - name: Inject Supabase Config
         run: |
-          sed -e "s/{{ SB_URL }}/${{ secrets.SB_URL }}/g" \
-              -e "s/{{ SB_KEY }}/${{ secrets.SB_KEY }}/g" \
+          sed -e "s|{{ SB_URL }}|${{ secrets.SB_URL }}|g" \
+              -e "s|{{ SB_KEY }}|${{ secrets.SB_KEY }}|g" \
               config.template.js > config.js
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+          
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          path: .
+          
+      - name: Deploy
+        uses: actions/deploy-pages@v4
