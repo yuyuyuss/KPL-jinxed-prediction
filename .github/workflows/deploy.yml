@@ -1,5 +1,11 @@
 name: Deploy to GitHub Pages
 
+# 关键点：为整个工作流授予写 id-token 的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 on:
   push:
     branches: [ "main" ]
