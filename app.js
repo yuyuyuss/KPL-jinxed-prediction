@@ -20,16 +20,37 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initSupabase() {
+  if (typeof supabase === 'undefined') {
+    console.error('Supabase 库未加载，请检查网络连接');
+    return;
+  }
+  
   if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_KEY === 'undefined' ||
-      SUPABASE_URL.includes('{{') || SUPABASE_KEY.includes('{{')) {
+      SUPABASE_URL.includes('{{') || SUPABASE_KEY.includes('{{') ||
+      SUPABASE_URL === '' || SUPABASE_KEY === '') {
     console.warn('Supabase 配置未设置');
     return;
   }
+  
   try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      realtime: {
+        params: {
+          eventsPerSecond: 10,
+        }
+      }
+    });
+    
+    if (typeof sb.from !== 'function') {
+      console.error('Supabase 客户端初始化异常，from 方法不存在');
+      sb = null;
+      return;
+    }
+    
     console.log('Supabase 初始化成功');
   } catch (e) {
     console.error('Supabase 初始化失败:', e);
+    sb = null;
   }
 }
 
