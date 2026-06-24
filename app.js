@@ -568,7 +568,7 @@ async function submitPrediction() {
   btn.textContent = '提交中...';
   
   try {
-    const [sa, sb] = selectedScore.split(':').map(Number);
+    const [sa, scB] = selectedScore.split(':').map(Number);
     const winner = selectedWinner === 'A' ? currentMatch.team_a_name : currentMatch.team_b_name;
     
     const { error } = await sb.from('predictions').insert({
@@ -577,7 +577,7 @@ async function submitPrediction() {
       room_code: currentRoom,
       predicted_winner: winner,
       predicted_score_a: sa,
-      predicted_score_b: sb
+      predicted_score_b: scB
     });
     
     if (error) throw error;
@@ -616,23 +616,23 @@ function openSettle(matchId) {
 
 async function settleMatch() {
   const sa = parseInt(document.getElementById('settle-score-a').value);
-  const sb = parseInt(document.getElementById('settle-score-b').value);
+  const scB = parseInt(document.getElementById('settle-score-b').value);
   
-  if (isNaN(sa) || isNaN(sb)) { toast('请输入比分', 'warning'); return; }
-  if (sa === sb) { toast('比分不能相同', 'warning'); return; }
+  if (isNaN(sa) || isNaN(scB)) { toast('请输入比分', 'warning'); return; }
+  if (sa === scB) { toast('比分不能相同', 'warning'); return; }
   
   const btn = document.getElementById('confirm-settle');
   btn.disabled = true;
   btn.textContent = '结算中...';
   
   try {
-    const winner = sa > sb ? currentMatch.team_a_name : currentMatch.team_b_name;
+    const winner = sa > scB ? currentMatch.team_a_name : currentMatch.team_b_name;
     
     await sb.from('matches').update({
       status: 'completed',
       actual_winner: winner,
       score_a: sa,
-      score_b: sb
+      score_b: scB
     }).eq('id', currentMatch.id);
     
     const { data: preds } = await sb.from('predictions')
@@ -646,7 +646,7 @@ async function settleMatch() {
       if (pred.predicted_winner === winner) {
         points += 1;
         correct = true;
-        if (pred.predicted_score_a === sa && pred.predicted_score_b === sb) {
+        if (pred.predicted_score_a === sa && pred.predicted_score_b === scB) {
           points += 2;
         }
       }
