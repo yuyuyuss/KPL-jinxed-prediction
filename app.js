@@ -20,8 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initSupabase() {
+  console.log('检查 Supabase 全局变量:', typeof supabase);
+  if (typeof supabase !== 'undefined') {
+    console.log('supabase 对象键:', Object.keys(supabase));
+  }
+  
   if (typeof supabase === 'undefined') {
     console.error('Supabase 库未加载，请检查网络连接');
+    showConfigError('Supabase 库加载失败，请刷新页面或检查网络');
     return;
   }
   
@@ -29,11 +35,25 @@ function initSupabase() {
       SUPABASE_URL.includes('{{') || SUPABASE_KEY.includes('{{') ||
       SUPABASE_URL === '' || SUPABASE_KEY === '') {
     console.warn('Supabase 配置未设置');
+    showConfigError('Supabase 配置未设置，请检查 config.js');
+    return;
+  }
+  
+  let createClientFn = null;
+  if (typeof supabase.createClient === 'function') {
+    createClientFn = supabase.createClient;
+  } else if (supabase.default && typeof supabase.default.createClient === 'function') {
+    createClientFn = supabase.default.createClient;
+  }
+  
+  if (!createClientFn) {
+    console.error('找不到 createClient 方法，supabase 对象结构异常');
+    showConfigError('Supabase 库结构异常，请刷新页面');
     return;
   }
   
   try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    sb = createClientFn(SUPABASE_URL, SUPABASE_KEY, {
       realtime: {
         params: {
           eventsPerSecond: 10,
@@ -43,6 +63,7 @@ function initSupabase() {
     
     if (typeof sb.from !== 'function') {
       console.error('Supabase 客户端初始化异常，from 方法不存在');
+      showConfigError('Supabase 初始化异常，请刷新页面');
       sb = null;
       return;
     }
@@ -50,6 +71,7 @@ function initSupabase() {
     console.log('Supabase 初始化成功');
   } catch (e) {
     console.error('Supabase 初始化失败:', e);
+    showConfigError('Supabase 初始化失败: ' + e.message);
     sb = null;
   }
 }
