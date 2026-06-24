@@ -1,4 +1,4 @@
-// ========== 使用全局变量（不再用 import） ==========
+// ========== 使用全局变量（不用 import） ==========
 // SUPABASE_URL 和 SUPABASE_KEY 来自 config.js（全局变量）
 // supabase 来自 CDN 加载的 @supabase/supabase-js
 
@@ -404,6 +404,7 @@ async function releasePoison() {
   
   const danmakuText = `【${currentUser.username}】发动致命毒奶，${targetTeam === 'A' ? 'Team A' : 'Team B'} 队危！💀`;
   
+  // 注意：danmaku 表需要先创建
   const { error } = await supabase
     .from('danmaku')
     .insert({
