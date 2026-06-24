@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 -- =============================================================
 CREATE TABLE IF NOT EXISTS matches (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  room_code TEXT NOT NULL,
   team_a TEXT NOT NULL,
   team_b TEXT NOT NULL,
   team_a_emoji TEXT NOT NULL,
