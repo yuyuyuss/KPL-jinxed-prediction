@@ -1,8 +1,10 @@
-// ========== 使用全局变量（不用 import） ==========
-// SUPABASE_URL 和 SUPABASE_KEY 来自 config.js（全局变量）
+// ========== 使用全局变量 ==========
+// SUPABASE_URL 和 SUPABASE_KEY 来自 config.js
 // supabase 来自 CDN 加载的 @supabase/supabase-js
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// 注意：不要用 const supabase = ...，因为 supabase 已经由 CDN 定义了
+// 我们用 supabaseClient 作为客户端实例
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentRoom = null;
@@ -11,8 +13,6 @@ let selectedTeam = null;
 let selectedScore = null;
 let poisonLevel = 0;
 let adminClicks = 0;
-
-const TEAM_EMOJIS = ['🐯', '🦁', '🐼', '🦊', '🐻', '🐨', '🐸', '🦄', '🐲', '🐮'];
 
 document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
@@ -46,7 +46,7 @@ async function joinRoom() {
     return;
   }
   
-  const { data: rooms, error } = await supabase
+  const { data: rooms, error } = await supabaseClient
     .from('profiles')
     .select('room_code')
     .eq('room_code', roomCode)
@@ -64,7 +64,7 @@ async function joinRoom() {
   
   currentRoom = roomCode;
   
-  const { data: existingUser, error: userError } = await supabase
+  const { data: existingUser, error: userError } = await supabaseClient
     .from('profiles')
     .select('*')
     .eq('username', username)
@@ -79,7 +79,7 @@ async function joinRoom() {
   if (existingUser.length > 0) {
     currentUser = existingUser[0];
   } else {
-    const { data: newUser, error: createError } = await supabase
+    const { data: newUser, error: createError } = await supabaseClient
       .from('profiles')
       .insert({
         username,
@@ -113,7 +113,7 @@ async function createRoom() {
   const roomCode = generateRoomCode();
   currentRoom = roomCode;
   
-  const { data: newUser, error } = await supabase
+  const { data: newUser, error } = await supabaseClient
     .from('profiles')
     .insert({
       username,
@@ -155,7 +155,7 @@ async function addSampleMatches() {
   ];
   
   for (const match of matches) {
-    await supabase.from('matches').insert(match);
+    await supabaseClient.from('matches').insert(match);
   }
 }
 
@@ -174,7 +174,7 @@ async function initializeGame() {
 }
 
 async function loadMatches() {
-  const { data: matches, error } = await supabase
+  const { data: matches, error } = await supabaseClient
     .from('matches')
     .select('*')
     .order('start_time', { ascending: true });
@@ -279,7 +279,7 @@ async function submitPrediction() {
   
   const [predictedScoreA, predictedScoreB] = selectedScore.split(':').map(Number);
   
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('predictions')
     .insert({
       profile_id: currentUser.id,
@@ -335,7 +335,7 @@ function createFallingEmojis(emojis, count) {
 }
 
 async function loadLeaderboard() {
-  const { data: profiles, error } = await supabase
+  const { data: profiles, error } = await supabaseClient
     .from('profiles')
     .select('*')
     .eq('room_code', currentRoom)
@@ -404,8 +404,7 @@ async function releasePoison() {
   
   const danmakuText = `【${currentUser.username}】发动致命毒奶，${targetTeam === 'A' ? 'Team A' : 'Team B'} 队危！💀`;
   
-  // 注意：danmaku 表需要先创建
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('danmaku')
     .insert({
       room_code: currentRoom,
@@ -461,7 +460,7 @@ async function submitScore() {
     return;
   }
   
-  const { data: match, error: matchError } = await supabase
+  const { data: match, error: matchError } = await supabaseClient
     .from('matches')
     .select('*')
     .eq('id', matchId)
@@ -475,7 +474,7 @@ async function submitScore() {
   const actualMatch = match[0];
   const actualWinner = scoreA > scoreB ? actualMatch.team_a : actualMatch.team_b;
   
-  await supabase
+  await supabaseClient
     .from('matches')
     .update({
       status: 'completed',
@@ -485,7 +484,7 @@ async function submitScore() {
     })
     .eq('id', matchId);
   
-  const { data: predictions, error: predError } = await supabase
+  const { data: predictions, error: predError } = await supabaseClient
     .from('predictions')
     .select('*')
     .eq('match_id', matchId);
@@ -508,12 +507,12 @@ async function submitScore() {
       }
     }
     
-    await supabase
+    await supabaseClient
       .from('predictions')
       .update({ points_earned: pointsEarned })
       .eq('id', pred.id);
     
-    const { data: profile, error: profError } = await supabase
+    const { data: profile, error: profError } = await supabaseClient
       .from('profiles')
       .select('*')
       .eq('id', pred.profile_id)
@@ -528,7 +527,7 @@ async function submitScore() {
       const newTitle = calculateTitle(newCorrect, newWrong, newStreak);
       
       if (!isCorrect) {
-        const { data: user, err } = await supabase
+        const { data: user, err } = await supabaseClient
           .from('profiles')
           .select('*')
           .eq('id', pred.profile_id)
@@ -551,7 +550,7 @@ async function submitScore() {
         }, 500);
       }
       
-      await supabase
+      await supabaseClient
         .from('profiles')
         .update({
           total_points: newPoints,
@@ -568,7 +567,7 @@ async function submitScore() {
   await loadLeaderboard();
   
   if (currentUser) {
-    const { data: user, error } = await supabase
+    const { data: user, error } = await supabaseClient
       .from('profiles')
       .select('*')
       .eq('id', currentUser.id)
@@ -599,7 +598,7 @@ async function logout() {
 }
 
 function setupRealtimeListeners() {
-  supabase.channel(`room:${currentRoom}`)
+  supabaseClient.channel(`room:${currentRoom}`)
     .on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -623,7 +622,7 @@ function setupRealtimeListeners() {
     })
     .subscribe();
   
-  supabase.channel(`danmaku:${currentRoom}`)
+  supabaseClient.channel(`danmaku:${currentRoom}`)
     .on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
