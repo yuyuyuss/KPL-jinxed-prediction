@@ -2,9 +2,67 @@
 // SUPABASE_URL 和 SUPABASE_KEY 来自 config.js
 // supabase 来自 CDN 加载的 @supabase/supabase-js
 
+// 配置检查函数
+function checkConfig() {
+  console.log('=== 配置检查 ===');
+  console.log('SUPABASE_URL:', SUPABASE_URL);
+  console.log('SUPABASE_KEY:', SUPABASE_KEY ? '已设置' : '未设置');
+  
+  const errors = [];
+  
+  if (typeof SUPABASE_URL === 'undefined') {
+    errors.push('SUPABASE_URL 未定义 - 请检查 config.js 是否正确加载');
+  } else if (SUPABASE_URL === '{{ SB_URL }}' || SUPABASE_URL === '') {
+    errors.push('SUPABASE_URL 是占位符 - 请在 GitHub Secrets 中配置 SB_URL');
+  }
+  
+  if (typeof SUPABASE_KEY === 'undefined') {
+    errors.push('SUPABASE_KEY 未定义 - 请检查 config.js 是否正确加载');
+  } else if (SUPABASE_KEY === '{{ SB_KEY }}' || SUPABASE_KEY === '') {
+    errors.push('SUPABASE_KEY 是占位符 - 请在 GitHub Secrets 中配置 SB_KEY');
+  }
+  
+  if (errors.length > 0) {
+    const errorMsg = errors.join('\n');
+    console.error('配置错误:\n', errorMsg);
+    
+    const loginCard = document.querySelector('.login-card');
+    if (loginCard) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.background = '#ffebee';
+      errorDiv.style.color = '#c62828';
+      errorDiv.style.padding = '15px';
+      errorDiv.style.borderRadius = '15px';
+      errorDiv.style.marginBottom = '20px';
+      errorDiv.style.fontSize = '0.9rem';
+      errorDiv.style.whiteSpace = 'pre-wrap';
+      errorDiv.innerHTML = '⚠️ <strong>配置错误</strong>\n' + errorMsg + '\n\n请检查 GitHub Secrets 配置或 config.js 文件';
+      loginCard.insertBefore(errorDiv, loginCard.firstChild);
+    }
+    
+    return false;
+  }
+  
+  return true;
+}
+
+let supabaseClient = null;
+
 // 注意：不要用 const supabase = ...，因为 supabase 已经由 CDN 定义了
 // 我们用 supabaseClient 作为客户端实例
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function initSupabase() {
+  if (!checkConfig()) {
+    return null;
+  }
+  try {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('Supabase 客户端初始化成功');
+    return supabaseClient;
+  } catch (e) {
+    console.error('Supabase 初始化失败:', e);
+    return null;
+  }
+}
 
 let currentUser = null;
 let currentRoom = null;
@@ -15,6 +73,8 @@ let poisonLevel = 0;
 let adminClicks = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 页面加载时先初始化 Supabase 并检查配置
+  initSupabase();
   setupEventListeners();
 });
 
@@ -38,6 +98,11 @@ function setupEventListeners() {
 }
 
 async function joinRoom() {
+  if (!supabaseClient) {
+    alert('Supabase 配置错误，请检查配置后再试！');
+    return;
+  }
+  
   const username = document.getElementById('username').value.trim();
   const roomCode = document.getElementById('room-code').value.trim().toUpperCase();
   
@@ -103,6 +168,11 @@ async function joinRoom() {
 }
 
 async function createRoom() {
+  if (!supabaseClient) {
+    alert('Supabase 配置错误，请检查配置后再试！');
+    return;
+  }
+  
   const username = document.getElementById('username').value.trim();
   
   if (!username) {
