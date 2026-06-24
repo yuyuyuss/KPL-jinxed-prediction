@@ -1,8 +1,8 @@
-import { SUPABASE_URL, SUPABASE_KEY } from './config.js';
+// ========== 使用全局变量（不再用 import） ==========
+// SUPABASE_URL 和 SUPABASE_KEY 来自 config.js（全局变量）
+// supabase 来自 CDN 加载的 @supabase/supabase-js
 
-const { createClient } = supabase;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentRoom = null;

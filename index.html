@@ -137,6 +137,9 @@
   <!-- 飘落动画容器 -->
   <div id="falling-container" class="falling-container hidden"></div>
 
-  <script type="module" src="app.js"></script>
+  <!-- ========== 脚本加载顺序：先 Supabase CDN，再 config.js，最后 app.js ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
