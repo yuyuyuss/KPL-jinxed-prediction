@@ -2,170 +2,329 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🍭 KPL 毒奶预测板 🍭</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍭</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🍬 毒奶预测板</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>">
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="pet-corner">🐱</div>
   
-  <!-- 登录/房间选择页面 -->
+  <!-- ==================== 登录页 ==================== -->
   <div id="login-page" class="page">
-    <div class="login-card">
-      <h1 class="title">🍬 KPL 毒奶预测板 🍬</h1>
-      <p class="subtitle">赛博预言家们，准备好了吗？✨</p>
-      
-      <div class="form-group">
-        <label>🐣 你的昵称</label>
-        <input type="text" id="username" placeholder="输入你的可爱昵称~" maxlength="10">
+    <div class="login-wrap">
+      <div class="brand">
+        <div class="brand-emoji">🍬</div>
+        <h1 class="brand-title">毒奶预测板</h1>
+        <p class="brand-sub">KPL 赛博预言家聚集地</p>
       </div>
       
-      <div class="form-group">
-        <label>🔑 房间码</label>
-        <input type="text" id="room-code" placeholder="4位房间码，如 A68K" maxlength="4" style="text-transform: uppercase; letter-spacing: 4px;">
-      </div>
-      
-      <button id="join-room" class="btn btn-primary">加入房间 🚪</button>
-      <button id="create-room" class="btn btn-secondary">创建新房间 ✨</button>
-      
-      <div class="login-tips">
-        <p>💡 提示：输入房间码加入朋友的房间</p>
-        <p>🎮 或者创建新房间开始游戏</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 主游戏页面 -->
-  <div id="game-page" class="page hidden">
-    <!-- 顶部状态栏 -->
-    <header class="game-header">
-      <div class="header-left">
-        <div class="room-display">
-          <span class="room-label">🏠 房间</span>
-          <div class="room-code-box">
-            <span id="current-room" class="room-code-text">----</span>
-            <button id="copy-room-btn" class="copy-btn" title="复制房间码">📋</button>
-          </div>
-        </div>
-        <div class="user-display">
-          <span class="user-avatar" id="user-avatar">🐣</span>
-          <span id="current-user">玩家</span>
-        </div>
-      </div>
-      <div class="header-right">
-        <span class="title-badge" id="user-title">🌸 新手预言家</span>
-        <button id="logout-btn" class="btn btn-small">退出 🚪</button>
-      </div>
-    </header>
-
-    <!-- 毒奶能量条 -->
-    <div class="poison-bar-container">
-      <div class="poison-bar-header">
-        <span>💜 毒奶能量</span>
-        <span id="poison-percent">0%</span>
-      </div>
-      <div class="poison-bar">
-        <div class="poison-fill" id="poison-fill"></div>
-      </div>
-      <p class="poison-tip">每猜错一场涨 25%，满 100% 可释放毒奶弹幕！</p>
-      <button id="release-poison" class="btn btn-poison hidden">释放毒奶！💥</button>
-    </div>
-
-    <!-- 主要内容区 -->
-    <div class="main-content">
-      <!-- 比赛列表 -->
-      <div class="matches-section">
-        <h2 class="section-title">📋 比赛列表</h2>
-        <div id="matches-list" class="matches-list">
-          <div class="loading">🍩 加载中...</div>
+      <div class="glass-card">
+        <div class="input-group">
+          <label>你的昵称</label>
+          <input type="text" id="username" placeholder="给自己起个名字吧~" maxlength="12">
         </div>
         
-        <!-- 隐藏的管理员按钮 -->
-        <button id="admin-toggle" class="admin-toggle">🔧 点击5次开启管理员模式</button>
-        <div id="admin-panel" class="admin-panel hidden">
-          <h3>🔧 管理员面板 - 比赛结算</h3>
-          <p class="admin-tip">选择比赛并输入实际比分，系统会自动计算积分</p>
-          <div class="admin-form">
-            <label>选择比赛:</label>
-            <select id="match-select"></select>
-            <div class="score-input-row">
-              <div class="score-input-group">
-                <label>Team A 得分</label>
-                <input type="number" id="score-a" min="0" max="5" placeholder="0">
-              </div>
-              <div class="score-vs">:</div>
-              <div class="score-input-group">
-                <label>Team B 得分</label>
-                <input type="number" id="score-b" min="0" max="5" placeholder="0">
-              </div>
-            </div>
-            <button id="submit-score" class="btn btn-admin">上传比分并结算 ✅</button>
-          </div>
+        <div class="input-group">
+          <label>房间码</label>
+          <input type="text" id="room-code" placeholder="4位房间码" maxlength="4" style="text-transform: uppercase; letter-spacing: 6px; text-align: center; font-weight: 700;">
         </div>
-      </div>
-
-      <!-- 排行榜 -->
-      <div class="leaderboard-section">
-        <h2 class="section-title">🏆 房间排行榜</h2>
-        <div id="leaderboard" class="leaderboard">
-          <div class="loading">🍩 加载中...</div>
+        
+        <button id="join-btn" class="btn btn-primary">加入房间</button>
+        <button id="create-btn" class="btn btn-ghost">创建新房间</button>
+        
+        <div class="help-link" id="show-help">
+          <span>❓ 怎么玩？</span>
         </div>
       </div>
     </div>
-
-    <!-- 弹幕容器 -->
-    <div id="danmaku-container" class="danmaku-container"></div>
   </div>
 
-  <!-- 预测弹窗 -->
-  <div id="prediction-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>🎯 来预测这场比赛吧！</h3>
-      <div id="modal-match-info"></div>
+  <!-- ==================== 主页面 ==================== -->
+  <div id="game-page" class="page hidden">
+    
+    <!-- 顶部栏 -->
+    <header class="top-bar">
+      <div class="room-info">
+        <span class="room-label">房间</span>
+        <div class="room-code-display">
+          <span id="current-room">----</span>
+          <button class="icon-btn" id="copy-room" title="复制房间码">📋</button>
+        </div>
+      </div>
+      <div class="user-chip">
+        <span class="user-name" id="current-user">玩家</span>
+        <button class="icon-btn" id="logout-btn" title="退出">🚪</button>
+      </div>
+    </header>
+    
+    <!-- 头衔展示 -->
+    <div class="title-bar">
+      <span class="my-title" id="user-title">🌸 新手预言家</span>
+      <span class="my-points">✨ <span id="user-points">0</span> 分</span>
+    </div>
+    
+    <!-- Tab 内容区 -->
+    <main class="tab-content">
       
-      <div class="prediction-section">
-        <label>🐾 第一步：选择你支持的队伍</label>
-        <div class="team-buttons">
-          <button id="pick-team-a" class="team-btn"></button>
-          <button id="pick-team-b" class="team-btn"></button>
+      <!-- Tab: 比赛 -->
+      <div id="tab-matches" class="tab-pane active">
+        <div class="section-header">
+          <h2>🎮 赛事预测</h2>
+          <button id="add-match-btn" class="icon-btn-round hidden" title="添加比赛">➕</button>
+        </div>
+        <div id="matches-list" class="matches-list">
+          <div class="empty-tip">
+            <div class="empty-emoji">🎮</div>
+            <p>暂无比赛</p>
+          </div>
         </div>
       </div>
       
-      <div class="prediction-section">
-        <label>📊 第二步：预测最终比分</label>
-        <div class="score-options">
-          <button class="score-btn" data-score="3:0">3:0</button>
-          <button class="score-btn" data-score="3:1">3:1</button>
-          <button class="score-btn" data-score="3:2">3:2</button>
-          <button class="score-btn" data-score="0:3">0:3</button>
-          <button class="score-btn" data-score="1:3">1:3</button>
-          <button class="score-btn" data-score="2:3">2:3</button>
+      <!-- Tab: 排行榜 -->
+      <div id="tab-ranking" class="tab-pane">
+        <div class="section-header">
+          <h2>🏆 排行榜</h2>
+        </div>
+        <div id="leaderboard" class="ranking-list">
+          <div class="empty-tip">
+            <div class="empty-emoji">🏆</div>
+            <p>还没有人加入</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tab: 聊天 -->
+      <div id="tab-chat" class="tab-pane">
+        <div class="section-header">
+          <h2>💬 聊天室</h2>
+        </div>
+        <div id="chat-list" class="chat-list"></div>
+        <div class="chat-input-wrap">
+          <input type="text" id="chat-input" placeholder="说点什么..." maxlength="50">
+          <button id="send-chat" class="btn-send">发送</button>
+        </div>
+      </div>
+      
+    </main>
+    
+    <!-- 底部 Tab 栏 -->
+    <nav class="bottom-tab">
+      <button class="tab-btn active" data-tab="matches">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-text">比赛</span>
+      </button>
+      <button class="tab-btn" data-tab="ranking">
+        <span class="tab-icon">🏆</span>
+        <span class="tab-text">排行</span>
+      </button>
+      <button class="tab-btn" data-tab="chat">
+        <span class="tab-icon">💬</span>
+        <span class="tab-text">聊天</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== 预测弹窗 ==================== -->
+  <div id="predict-modal" class="modal hidden">
+    <div class="modal-bg"></div>
+    <div class="modal-card">
+      <h3>🔮 来预测比分吧</h3>
+      
+      <div class="match-preview">
+        <div class="team-preview">
+          <span class="team-emoji" id="preview-emoji-a">🎮</span>
+          <span class="team-name" id="preview-name-a">战队A</span>
+        </div>
+        <span class="vs-text">VS</span>
+        <div class="team-preview">
+          <span class="team-emoji" id="preview-emoji-b">🎮</span>
+          <span class="team-name" id="preview-name-b">战队B</span>
+        </div>
+      </div>
+      
+      <div class="predict-section">
+        <label>选择胜者</label>
+        <div class="winner-select">
+          <button class="winner-btn" data-team="A">
+            <span id="btn-team-a-emoji">🎮</span>
+            <span id="btn-team-a-name">战队A</span>
+          </button>
+          <button class="winner-btn" data-team="B">
+            <span id="btn-team-b-emoji">🎮</span>
+            <span id="btn-team-b-name">战队B</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="predict-section">
+        <label>预测比分</label>
+        <div class="score-select" id="score-options"></div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancel-predict">取消</button>
+        <button class="btn btn-primary" id="confirm-predict">确认预测 ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 添加比赛弹窗（房主） ==================== -->
+  <div id="add-match-modal" class="modal hidden">
+    <div class="modal-bg"></div>
+    <div class="modal-card">
+      <h3>➕ 添加比赛</h3>
+      
+      <div class="input-group">
+        <label>🔥 A 队队名</label>
+        <input type="text" id="new-team-a" placeholder="如：成都AG超玩会" maxlength="12">
+      </div>
+      
+      <div class="input-group">
+        <label>🎯 A 队 emoji</label>
+        <div class="emoji-picker" id="emoji-a-picker">
+          <span class="emoji-opt selected" data-emoji="🐯">🐯</span>
+          <span class="emoji-opt" data-emoji="🐺">🐺</span>
+          <span class="emoji-opt" data-emoji="⭐">⭐</span>
+          <span class="emoji-opt" data-emoji="🔵">🔵</span>
+          <span class="emoji-opt" data-emoji="🦊">🦊</span>
+          <span class="emoji-opt" data-emoji="🦁">🦁</span>
+          <span class="emoji-opt" data-emoji="🐉">🐉</span>
+          <span class="emoji-opt" data-emoji="🎮">🎮</span>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>🔥 B 队队名</label>
+        <input type="text" id="new-team-b" placeholder="如：重庆狼队" maxlength="12">
+      </div>
+      
+      <div class="input-group">
+        <label>🎯 B 队 emoji</label>
+        <div class="emoji-picker" id="emoji-b-picker">
+          <span class="emoji-opt" data-emoji="🐯">🐯</span>
+          <span class="emoji-opt selected" data-emoji="🐺">🐺</span>
+          <span class="emoji-opt" data-emoji="⭐">⭐</span>
+          <span class="emoji-opt" data-emoji="🔵">🔵</span>
+          <span class="emoji-opt" data-emoji="🦊">🦊</span>
+          <span class="emoji-opt" data-emoji="🦁">🦁</span>
+          <span class="emoji-opt" data-emoji="🐉">🐉</span>
+          <span class="emoji-opt" data-emoji="🎮">🎮</span>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>⚡ 赛制（BO几）</label>
+        <div class="bo-select">
+          <button class="bo-btn selected" data-bo="5">BO5</button>
+          <button class="bo-btn" data-bo="7">BO7</button>
+          <button class="bo-btn" data-bo="3">BO3</button>
         </div>
       </div>
       
       <div class="modal-actions">
-        <button id="submit-prediction" class="btn btn-primary">冲鸭！🚀</button>
-        <button id="cancel-prediction" class="btn btn-secondary">再想想</button>
+        <button class="btn btn-ghost" id="cancel-add-match">取消</button>
+        <button class="btn btn-primary" id="confirm-add-match">添加 ✨</button>
       </div>
     </div>
   </div>
 
-  <!-- 结果弹窗 -->
-  <div id="result-modal" class="modal hidden">
-    <div class="modal-content result-modal">
-      <div id="result-emoji" class="result-emoji">🎉</div>
-      <h3 id="result-title">太棒了！</h3>
-      <p id="result-message"></p>
-      <button id="close-result" class="btn btn-primary">好的~ ✨</button>
+  <!-- ==================== 结算弹窗（房主） ==================== -->
+  <div id="settle-modal" class="modal hidden">
+    <div class="modal-bg"></div>
+    <div class="modal-card">
+      <h3>✅ 比赛结算</h3>
+      
+      <div class="match-preview">
+        <div class="team-preview">
+          <span class="team-emoji" id="settle-emoji-a">🎮</span>
+          <span class="team-name" id="settle-name-a">战队A</span>
+        </div>
+        <span class="vs-text">VS</span>
+        <div class="team-preview">
+          <span class="team-emoji" id="settle-emoji-b">🎮</span>
+          <span class="team-name" id="settle-name-b">战队B</span>
+        </div>
+      </div>
+      
+      <div class="score-input-row">
+        <div class="score-input-col">
+          <input type="number" id="settle-score-a" min="0" max="7" value="0">
+        </div>
+        <span class="colon">:</span>
+        <div class="score-input-col">
+          <input type="number" id="settle-score-b" min="0" max="7" value="0">
+        </div>
+      </div>
+      
+      <p class="settle-tip">输入最终比分，系统自动结算积分</p>
+      
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancel-settle">取消</button>
+        <button class="btn btn-primary" id="confirm-settle">确认结算 🏆</button>
+      </div>
     </div>
   </div>
 
-  <!-- 飘落动画容器 -->
-  <div id="falling-container" class="falling-container hidden"></div>
+  <!-- ==================== 帮助弹窗 ==================== -->
+  <div id="help-modal" class="modal hidden">
+    <div class="modal-bg"></div>
+    <div class="modal-card help-card">
+      <h3>📖 玩法说明</h3>
+      
+      <div class="help-section">
+        <h4>🎯 基本规则</h4>
+        <ul>
+          <li>猜对胜者：+1 分</li>
+          <li>猜对胜者 + 比分全对：+3 分</li>
+          <li>猜错：不加分</li>
+        </ul>
+      </div>
+      
+      <div class="help-section">
+        <h4>🎭 头衔系统</h4>
+        <ul>
+          <li>🔮 赛博先知：胜率 > 80% 且 ≥3 场</li>
+          <li>👑 人中吕布：连胜 5 场</li>
+          <li>🍼 电竞贝利：连败 4 场</li>
+          <li>🧙 茅山道士：连败 6 场</li>
+        </ul>
+      </div>
+      
+      <div class="help-section">
+        <h4>💜 毒奶能量</h4>
+        <ul>
+          <li>每猜错一场，毒奶能量 +25%</li>
+          <li>满 100% 可释放毒奶弹幕</li>
+          <li>释放后能量清零</li>
+        </ul>
+      </div>
+      
+      <div class="help-section">
+        <h4>👑 房主权限</h4>
+        <ul>
+          <li>创建房间的人是房主</li>
+          <li>房主可以添加、删除比赛</li>
+          <li>房主可以结算比赛比分</li>
+        </ul>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="close-help">知道啦 ✨</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- ========== 脚本加载顺序 ========== -->
+  <!-- Toast 容器 -->
+  <div id="toast-container"></div>
+
+  <!-- 弹幕容器 -->
+  <div id="danmaku-container"></div>
+
+  <!-- 飘落表情容器 -->
+  <div id="falling-container"></div>
+
+  <!-- ========== 脚本 ========== -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
