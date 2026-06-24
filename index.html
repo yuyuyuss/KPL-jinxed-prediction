@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍭 KPL 毒奶预测板 🍭</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="pet-corner">🐱</div>
+  
+  <!-- 登录/房间选择页面 -->
+  <div id="login-page" class="page">
+    <div class="login-card">
+      <h1 class="title">🍬 KPL 毒奶预测板 🍬</h1>
+      <p class="subtitle">赛博预言家们，准备好了吗？✨</p>
+      
+      <div class="form-group">
+        <label>🐣 你的昵称</label>
+        <input type="text" id="username" placeholder="输入你的可爱昵称~" maxlength="10">
+      </div>
+      
+      <div class="form-group">
+        <label>🔑 房间码</label>
+        <input type="text" id="room-code" placeholder="4位房间码，如 A68K" maxlength="4" pattern="[A-Za-z0-9]{4}">
+      </div>
+      
+      <button id="join-room" class="btn btn-primary">加入房间 🚪</button>
+      <button id="create-room" class="btn btn-secondary">创建新房间 ✨</button>
+    </div>
+  </div>
+
+  <!-- 主游戏页面 -->
+  <div id="game-page" class="page hidden">
+    <!-- 顶部状态栏 -->
+    <header class="game-header">
+      <div class="header-left">
+        <span class="room-info">🏠 房间: <span id="current-room"></span></span>
+        <span class="user-info">👤 <span id="current-user"></span></span>
+      </div>
+      <div class="header-right">
+        <span class="title-badge" id="user-title">🌸 新手预言家</span>
+        <button id="logout-btn" class="btn btn-small">退出 🚪</button>
+      </div>
+    </header>
+
+    <!-- 毒奶能量条 -->
+    <div class="poison-bar-container">
+      <div class="poison-bar-header">
+        <span>💜 毒奶能量</span>
+        <span id="poison-percent">0%</span>
+      </div>
+      <div class="poison-bar">
+        <div class="poison-fill" id="poison-fill"></div>
+      </div>
+      <button id="release-poison" class="btn btn-poison hidden">释放毒奶！💥</button>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-content">
+      <!-- 比赛列表 -->
+      <div class="matches-section">
+        <h2 class="section-title">📋 即将开始的比赛</h2>
+        <div id="matches-list" class="matches-list"></div>
+        
+        <!-- 隐藏的管理员按钮 -->
+        <button id="admin-toggle" class="admin-toggle">点击5次开启管理员模式</button>
+        <div id="admin-panel" class="admin-panel hidden">
+          <h3>🔧 管理员面板</h3>
+          <div class="admin-form">
+            <label>选择比赛:</label>
+            <select id="match-select"></select>
+            <label>Team A 得分:</label>
+            <input type="number" id="score-a" min="0" max="5">
+            <label>Team B 得分:</label>
+            <input type="number" id="score-b" min="0" max="5">
+            <button id="submit-score" class="btn btn-admin">上传比分 ✅</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 排行榜 -->
+      <div class="leaderboard-section">
+        <h2 class="section-title">🏆 排行榜</h2>
+        <div id="leaderboard" class="leaderboard"></div>
+      </div>
+    </div>
+
+    <!-- 弹幕容器 -->
+    <div id="danmaku-container" class="danmaku-container"></div>
+  </div>
+
+  <!-- 预测弹窗 -->
+  <div id="prediction-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>🎯 预测这场比赛</h3>
+      <div id="modal-match-info"></div>
+      
+      <div class="prediction-section">
+        <label>🐾 预测胜者</label>
+        <div class="team-buttons">
+          <button id="pick-team-a" class="team-btn"></button>
+          <button id="pick-team-b" class="team-btn"></button>
+        </div>
+      </div>
+      
+      <div class="prediction-section">
+        <label>📊 预测比分</label>
+        <div class="score-options">
+          <button class="score-btn" data-score="3:0">3:0</button>
+          <button class="score-btn" data-score="3:1">3:1</button>
+          <button class="score-btn" data-score="3:2">3:2</button>
+          <button class="score-btn" data-score="0:3">0:3</button>
+          <button class="score-btn" data-score="1:3">1:3</button>
+          <button class="score-btn" data-score="2:3">2:3</button>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button id="submit-prediction" class="btn btn-primary">冲鸭！🚀</button>
+        <button id="cancel-prediction" class="btn btn-secondary">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果弹窗 -->
+  <div id="result-modal" class="modal hidden">
+    <div class="modal-content result-modal">
+      <div id="result-emoji" class="result-emoji">🎉</div>
+      <h3 id="result-title">预测成功！</h3>
+      <p id="result-message"></p>
+      <button id="close-result" class="btn btn-primary">太棒了！✨</button>
+    </div>
+  </div>
+
+  <!-- 飘落动画容器 -->
+  <div id="falling-container" class="falling-container hidden"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
